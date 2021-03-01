@@ -7,9 +7,11 @@
 // @require     http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js
 // @require     http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js
 // @grant       GM_addStyle
-// @version     0.3.3
+// @version     2021.03.01
 // ==/UserScript==
 
+// Novedades 2021.03.01
+//   - Cambio sistema numeración versiones
 // Novedades 0.3.3:
 //   - ctrl-alt-h Inserta ayuda en lugar de ctrl-alt-0
 //   - ctrl-alt-0 captura portapapeles y guarda para insertarlo con ctrl-alt-9
