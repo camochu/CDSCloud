@@ -12,6 +12,8 @@
 
 // Beta
 //   - probando cambiar foco a botón tras insertar */DIAGNOSTICO.. pero de momento no va bien
+// Novedades 2021.03.01
+//   - Cambio sistema numeración versiones
 // Novedades 0.3.3:
 //   - ctrl-alt-h Inserta ayuda en lugar de ctrl-alt-0
 //   - ctrl-alt-0 captura portapapeles y guarda para insertarlo con ctrl-alt-9
