@@ -7,7 +7,7 @@
 // @require     http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js
 // @require     http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js
 // @grant       GM_addStyle
-// @version     2021.03.01.beta
+// @version     2021.03.02.beta
 // ==/UserScript==
 
 // Beta
