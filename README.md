@@ -5,6 +5,7 @@ Carpeta VBA
 Carpeta JavaScript
   - Argonauta++.js
       Script para Chrome/Firefox. Necesario complemento Tampermonkey
+      URL de actualización: https://raw.githubusercontent.com/camochu/CDSCloud/master/JavaScript/Argonauta%2B%2B.js
       
 Carpeta Powershell
   Scripts para automatizar procedimientos. Copiarlos al equipo desde donde haya que lanzarlos
