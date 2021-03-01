@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name        Argonauta++
+// @name        Argonauta++(beta)
 // @description Remedy UI modification
 // @copyright   2020, Raúl Díez Martín. Fork: Miguel A. Pardo
 // @icon        https://itsmte.tor.telefonica.es/arsys/resources/images/favicon.ico
@@ -7,11 +7,11 @@
 // @require     http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js
 // @require     http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js
 // @grant       GM_addStyle
-// @version     2021.03.01
+// @version     beta
 // ==/UserScript==
 
-// Novedades 2021.03.01
-//   - Cambio sistema numeración versiones
+// Beta
+//   - probando cambiar foco a botón tras insertar */DIAGNOSTICO.. pero de momento no va bien
 // Novedades 0.3.3:
 //   - ctrl-alt-h Inserta ayuda en lugar de ctrl-alt-0
 //   - ctrl-alt-0 captura portapapeles y guarda para insertarlo con ctrl-alt-9
@@ -77,6 +77,7 @@ myButton.onclick = copyINC;
 document.addEventListener('keydown', function(event) {
     // Se detecta cuándo se guarda el ticket mediante "CTRL + ALT + ENTER" para copiar los detalles del ticket al portapapeles
     if (event.ctrlKey && event.altKey && event.key === 'Enter') {
+//        console.log('Detectada combinación de teclas para "Guardar". Se copian los datos al portapapeles.');
         copyINC();
     }
    // Se detecta cuándo se pulsa "CTRL + ALT + h" para mostrar ayuda
@@ -97,6 +98,7 @@ document.addEventListener('keydown', function(event) {
             getResumen();
             myResumen = '*/DIAGNOSTICO: ' + myResumen + '/*'
             $("[id*='304247080']").focus().val('').val(myResumen);
+//            $("[id*='304247110']").focus();
         }
         // se rellena categorizacion de resolución si estoy en la pestaña categorizacion
         else if (($("[id*='304287750']")[0].style.visibility ==='inherit') &&($("[id*='304287650']")[0].style.visibility ==='inherit')) {
@@ -111,6 +113,7 @@ document.addEventListener('keydown', function(event) {
     }
     // Se detecta cuándo se pulsa Ctrl-Alt-[0..9] en la pestaña detalles de trabajo
     else if (event.ctrlKey && event.altKey && (event.key >= '0' && event.key <= '9') && $("[id*='301626100']")[0].style.visibility ==='inherit') {
+        console.log('Ctrl-Alt-' + event.key)
           // se crea nota personalizada si ctrl-alt-0
           if(event.key === '0') {
               navigator.clipboard.readText().then(
@@ -124,6 +127,7 @@ document.addEventListener('keydown', function(event) {
 
 setInterval(function() {
     if ($("#label80137").text() != "Página de Inicio de TI" && $("[id*='1000000099']").last().val() == "Incidencia") {
+//            console.log('Incidencia' + $("[id*='1000000099']").last().val());
             myButton.style = "font-size: 15px; bottom: 15px; left: 15px; position: fixed; z-index: 99999; padding: 5px; background-color: rgb(255, 128, 128)"; // Anaranjado
             myButton.innerHTML = "Copiar INC 📋";
     }
