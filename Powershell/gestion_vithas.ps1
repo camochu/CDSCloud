@@ -1,4 +1,4 @@
-#V21.03.01
+#V21.03.12
 add-pssnapin microsoft.exchange.management.powershell.Snapin
 $adm=$false
 $banner_exchange="  ____             __          ______          _                            
@@ -29,7 +29,7 @@ $banner_sinAD="  _   _                   _     _                               _
  |_| \_|\___/   \___/_/\_\_|___/\__\___|  \___|_| |_| /_/    \_\_____/ "
 do {
     cls
-    $aliasAD = Read-Host -Prompt "Introduce el alias de AD del usuario (sin @vithas.es)"
+    $aliasAD = Read-Host -Prompt "Por favor, introduce el alias de AD del usuario"
     $dominio= "@vithases.mail.onmicrosoft.com"
     $mailbox= $aliasAD + $dominio
     $ad_user=$null
@@ -43,16 +43,16 @@ do {
         Write-Host "Usuario: " -NoNewline
         if ($buzon_exchange) {
             Write-Host "$aliasAD - $buzon_exchange" -ForegroundColor yellow
-            write-output $banner_exchange
+            Write-Host $banner_exchange
         } elseif ($buzon_o365) {
             Write-Host "$aliasAD - $buzon_o365" -ForegroundColor yellow
-            write-output $banner_o365
+            Write-Host $banner_o365
         } elseif ($ad_user) {
             Write-Host "$aliasAD" -ForegroundColor yellow
-            write-output $banner_sinbuzon
+            Write-Host $banner_sinbuzon
         } else {
             Write-Host "$aliasAD" -ForegroundColor yellow
-            write-output $banner_sinAD
+            Write-Host $banner_sinAD
         }
         if($accion -eq "M") { $adm = -not $adm }
         if ($buzon_exchange) {
@@ -74,7 +74,7 @@ do {
         } elseif ($ad_user -and (-not $buzon_o365) -and $adm) {
             if ($accion -eq "1") {
                 Enable-RemoteMailbox -Identity $aliasAD -RemoteRoutingAddress $mailbox
-                Write-Output "`nFin de la ejecución, en caso de detectar algun error escalar incidencia con el pantallazo "
+                Write-Host "`nFin de la ejecución, en caso de detectar algun error escalar incidencia con el pantallazo "
                 Start-Sleep -Seconds 3
                 $buzon_o365=Get-RemoteMailbox -Identity $aliasAD -erroraction 'silentlycontinue'
                 $accion="8"
@@ -85,35 +85,35 @@ do {
                 continue
             }
         }
-        write-output " _______________________________"
+        Write-Host " _______________________________"
         if ($adm) {
         Write-Host "/   Ordenes (" -NoNewline
         Write-Host "Administrador" -NoNewline -ForegroundColor red
         Write-Host ")     \" 
         } else {
-        Write-Output "/     Ordenes (Consulta)        \"
+        Write-Host "/     Ordenes (Consulta)        \"
         }
-        Write-Output "|                               |"
+        Write-Host "|                               |"
         if ($buzon_exchange) {
-        Write-Output "| 1 - Ver BBDD actual           |"
+        Write-Host "| 1 - Ver BBDD actual           |"
         if ($adm) {
-        Write-Output "| 2 - Mover a bajas             |"
-        Write-Output "| 3 - Ver progreso movimiento   |"
+        Write-Host "| 2 - Mover a bajas             |"
+        Write-Host "| 3 - Ver progreso movimiento   |"
         }
         } elseif ($ad_user -and (-not $buzon_o365) -and $adm) {
-        Write-Output "| 1 - Crear buzón O365          |"
-        Write-Output "| 2 - Actualizar creación buzón |"
+        Write-Host "| 1 - Crear buzón O365          |"
+        Write-Host "| 2 - Actualizar creación buzón |"
         } elseif ($buzon_o365 -and $adm) {
-        Write-Output "| 1 - Eliminar buzon o365       |"
+        Write-Host "| 1 - Eliminar buzon o365       |"
         }
-        Write-Output "|                               |"
-        Write-Output "| 9 - Repetir para otro usuario |"
-        Write-Output "| M - Modo consulta/admin.      |"
-        Write-Output "| S - Salir                     |"
-        Write-Output "\_______________________________/"
-        Write-Output ""
+        Write-Host "|                               |"
+        Write-Host "| 9 - Repetir para otro usuario |"
+        Write-Host "| M - Modo consulta/admin.      |"
+        Write-Host "| S - Salir                     |"
+        Write-Host "\_______________________________/"
+        Write-Host ""
         if ($adm) { write-host "Por favor, introduce la orden: " -NoNewline -ForegroundColor red}
-        else { write-host "Introduce la orden: " -NoNewline }
+        else { write-host "Por favor, introduce la orden: " -NoNewline }
         $accion = Read-Host
     } while ($accion -ne "9" -and $accion -ne "S")
 } while ($accion -ne "S")
