@@ -7,9 +7,11 @@
 // @require     http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js
 // @require     http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js
 // @grant       GM_addStyle
-// @version     2021.03.01
+// @version     2021.03.12
 // ==/UserScript==
 
+// Novedades 2021.03.12
+//   - Permite pegar diagnostico con el contenido de portapapeles con segunda pulsacion ctr-alt-d
 // Novedades 2021.03.01
 //   - Cambio sistema numeración versiones
 // Novedades 0.3.3:
@@ -47,6 +49,11 @@ var myNote = [["Pendiente","*/Pendiente  de Usuario/Cliente (Pdte. Accion requer
               ["Inserta nota personalizada",""],
               ["Modificar nota personalizada (captura portapapeles)",""]
              ];
+var diagnostico1 = true;
+var myDiag = "";
+var myDiagRes = "";
+var myDiagClip = "";
+
 // Se construye y se guarda el texto de ayuda
 myHelp = "Inserción de diagnostico\n";
 myHelp += "  Ctrl-Alt-d   \n\n";
@@ -92,11 +99,26 @@ document.addEventListener('keydown', function(event) {
     }
     // Se detecta cuándo se pulsa "CTRL + ALT + d"
     else if (event.ctrlKey && event.altKey && (event.key === 'd' || event.key === 'D')) {
-        // se genera nota */DIAGNOSTICO+resumen/* si estoy en la pestaña detalles de trabajo
+        // si estoy en la pestaña detalles de trabajo
         if ($("[id*='301626100']")[0].style.visibility ==='inherit') {
-            getResumen();
-            myResumen = '*/DIAGNOSTICO: ' + myResumen + '/*'
-            $("[id*='304247080']").focus().val('').val(myResumen);
+          //obtengo diagnostico según portapapeles
+          navigator.clipboard.readText().then(clipText => {
+            myDiagClip = '*/DIAGNOSTICO: ' + clipText + '/*';
+          });
+          //obtengo diagnostico segun resumen
+          getResumen();
+          myDiagRes = '*/DIAGNOSTICO: ' + myResumen + '/*';
+          // se genera nota */DIAGNOSTICO+resumen/* si pulso por primera vez
+          if (diagnostico1) {
+            myDiag = myDiagRes;
+            diagnostico1 = false;
+          }
+          // se genera nota */DIAGNOSTICO+portapapeles/* si pulso por segunda vez
+          else {
+            myDiag = myDiagClip;
+            diagnostico1 = true;
+          }
+          $("[id*='304247080']").focus().val('').val(myDiag);
         }
         // se rellena categorizacion de resolución si estoy en la pestaña categorizacion
         else if (($("[id*='304287750']")[0].style.visibility ==='inherit') &&($("[id*='304287650']")[0].style.visibility ==='inherit')) {
@@ -107,6 +129,7 @@ document.addEventListener('keydown', function(event) {
             $("[id*='1000003889']").focus().val('').val(myCRN2);
             $("[id*='1000003890']").focus().val('').val(myCRN3);
             $("[id*='1000002488']").focus();
+            diagnostico1 = true;
         }
     }
     // Se detecta cuándo se pulsa Ctrl-Alt-[0..9] en la pestaña detalles de trabajo
