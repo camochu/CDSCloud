@@ -29,7 +29,14 @@ $banner_sinAD="  _   _                   _     _                               _
  |_| \_|\___/   \___/_/\_\_|___/\__\___|  \___|_| |_| /_/    \_\_____/ "
 do {
     cls
-    $aliasAD = Read-Host -Prompt "Introduce el alias de AD del usuario (sin @vithas.es)"
+    $aliasAD = Read-Host -Prompt "Introduce el alias de AD (sin @vithas.es) o '?' para buscar"
+    while ($aliasAD -eq "?") {
+      $searchAD = Read-Host -Prompt "Introduce el texto a buscar en AD"
+      Write-Host ""
+      Get-ADUser -Filter "Name -like '*$searchAD*'" | Select-Object -Property SamAccountName, DistinguishedName | Sort-Object SamAccountName
+      Write-Host ""
+      $aliasAD = Read-Host -Prompt "Introduce alias (puedes seleccionar y copiar-pegar) o '?' para buscar"
+    }
     $dominio= "@vithases.mail.onmicrosoft.com"
     $mailbox= $aliasAD + $dominio
     $ad_user=$null
@@ -104,10 +111,10 @@ do {
         Write-Host "| 1 - Crear buzón O365          |"
         Write-Host "| 2 - Actualizar creación buzón |"
         } elseif ($buzon_o365 -and $adm) {
-        Write-Host "| 1 - Eliminar buzon o365       |"
+        Write-Host "| 1 - Eliminar buzón o365       |"
         }
         Write-Host "|                               |"
-        Write-Host "| 9 - Repetir para otro usuario |"
+        Write-Host "| 0 - Buscar otro usuario       |"
         Write-Host "| M - Modo consulta/admin.      |"
         Write-Host "| S - Salir                     |"
         Write-Host "\_______________________________/"
@@ -115,5 +122,5 @@ do {
         if ($adm) { write-host "Por favor, introduce la orden: " -NoNewline -ForegroundColor red}
         else { write-host "Por favor, introduce la orden: " -NoNewline }
         $accion = Read-Host
-    } while ($accion -ne "9" -and $accion -ne "S")
+    } while ($accion -ne "0" -and $accion -ne "S")
 } while ($accion -ne "S")
