@@ -1,4 +1,4 @@
-#V21.03.12
+#V21.03.18
 add-pssnapin microsoft.exchange.management.powershell.Snapin
 $adm=$false
 $banner_exchange="  ____             __          ______          _                            
@@ -33,7 +33,7 @@ do {
     while ($aliasAD -eq "?") {
       $searchAD = Read-Host -Prompt "Introduce el texto a buscar en AD"
       Write-Host ""
-      Get-ADUser -Filter "Name -like '*$searchAD*'" | Select-Object -Property SamAccountName, DistinguishedName | Sort-Object SamAccountName
+      Get-ADUser -Filter "Name -like '*$searchAD*'" | Select-Object -Property SamAccountName, DistinguishedName | Sort-Object SamAccountName | Out-Host
       Write-Host ""
       $aliasAD = Read-Host -Prompt "Introduce alias (puedes seleccionar y copiar-pegar) o '?' para buscar"
     }
@@ -66,9 +66,9 @@ do {
             if ($accion -eq "1") {
   	            Get-Mailbox $aliasAD | fl database
             } elseif ($accion -eq "2" -and $adm) {
-  	            New-MoveRequest $aliasAD -TargetDatabase bajasvithas -BadItemLimit 1000 -AcceptLargeDataLoss
+  	            New-MoveRequest $aliasAD -TargetDatabase bajasvithas -BadItemLimit 1000 -AcceptLargeDataLoss | Out-Host
             } elseif ($accion -eq "3" -and $adm) {
-  	            Get-MoveRequestStatistics $aliasAD | ft -autosize
+  	            Get-MoveRequestStatistics $aliasAD | ft -autosize | Out-Host
             }
         } elseif ($buzon_o365 -and $adm) {
             if ($accion -eq "1") {
@@ -80,7 +80,7 @@ do {
             }
         } elseif ($ad_user -and (-not $buzon_o365) -and $adm) {
             if ($accion -eq "1") {
-                Enable-RemoteMailbox -Identity $aliasAD -RemoteRoutingAddress $mailbox
+                Enable-RemoteMailbox -Identity $aliasAD -RemoteRoutingAddress $mailbox | Out-Host
                 Write-Host "`nFin de la ejecución, en caso de detectar algun error escalar incidencia con el pantallazo "
                 Start-Sleep -Seconds 3
                 $buzon_o365=Get-RemoteMailbox -Identity $aliasAD -erroraction 'silentlycontinue'
@@ -88,7 +88,7 @@ do {
                 continue
             } elseif ($accion -eq "2") {
                 $buzon_o365=Get-RemoteMailbox -Identity $aliasAD -erroraction 'silentlycontinue'
-                $accion="8"
+                $accion=""
                 continue
             }
         }

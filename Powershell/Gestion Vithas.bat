@@ -1,0 +1,1 @@
+@start powershell.exe -command "& C:\Users\ext.miguel.alvarez\Desktop\gestion_vithas.ps1"
