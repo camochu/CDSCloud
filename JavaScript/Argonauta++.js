@@ -161,8 +161,8 @@ setInterval(function() {
     }
 }, 8000);
 
-////////////////////////////
-///       FUNCIONES      ///
+  ////////////////////////////
+ ///       FUNCIONES      ///
 ////////////////////////////
 
 function copyINC(){
@@ -342,8 +342,8 @@ selectorTxt,     /* Required: The jQuery selector string that
     waitForKeyElements.controlObj   = controlObj;
 }
 
-////////////////////////////
-///     CUSTOMIZACIÓN    ///
+  ////////////////////////////
+ ///     CUSTOMIZACIÓN    ///
 ////////////////////////////
 
 // Ocultar barra superior inútil

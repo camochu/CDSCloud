@@ -16,12 +16,11 @@ function Write-UsersLicence {
   Write-Output "---------------------------------------------------"
   Write-Output ""
 }
-
 if($azureConnection.Account -eq $null){
     $azureConnection = Connect-AzureAD
     if ($azureConnection -eq $null) {
-      Write-Output "Conexión no establecida"
-      Write-Output "Posible error de autenticación o bien no se encuentra el módulo AzureAD"
+      Write-Output "ConexiÃ³n no establecida"
+      Write-Output "Posible error de autenticaciÃ³n o bien no se encuentra el mÃ³dulo AzureAD"
       Write-Output "Para el segundo caso, instalar desde un powershell abierto como administrador: Install-Module -Name AzureAD"
     }
 }
@@ -32,7 +31,7 @@ if($azureConnection.Account -ne $null){
   $planName="ENTERPRISEPACK" # licencia E3
   $licensePlanList = Get-AzureADSubscribedSku
   Write-UsersLicence
-  $respuesta = Read-Host -Prompt "¿Quieres eliminar la licencia $planName de todos esos usuarios? (S/N)"
+  $respuesta = Read-Host -Prompt "Â¿Quieres eliminar la licencia $planName de todos esos usuarios? (S/N)"
   if ($respuesta -eq "s") {
       $license = New-Object -TypeName Microsoft.Open.AzureAD.Model.AssignedLicenses
       $License.RemoveLicenses = (Get-AzureADSubscribedSku | Where-Object -Property SkuPartNumber -Value $planName -EQ).SkuID
