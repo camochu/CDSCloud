@@ -7,9 +7,13 @@
 // @require     http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js
 // @require     http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js
 // @grant       GM_addStyle
-// @version     2021.03.12
+// @version     2021.03.24
 // ==/UserScript==
 
+// Novedades 2021.03.24
+//   - Modifica comportamiento ctr-alt-d:
+//       Con la primera pulsacion: diagnostico vacio
+//       Con la segunda: diagnostico pegado del portapapeles
 // Novedades 2021.03.12
 //   - Permite pegar diagnostico con el contenido de portapapeles con segunda pulsacion ctr-alt-d
 // Novedades 2021.03.01
@@ -49,7 +53,7 @@ var myNote = [["Pendiente","*/Pendiente  de Usuario/Cliente (Pdte. Accion requer
               ["Inserta nota personalizada",""],
               ["Modificar nota personalizada (captura portapapeles)",""]
              ];
-var diagnostico1 = true;
+var diagnostico1 = 1;
 var myDiag = "";
 var myDiagRes = "";
 var myDiagClip = "";
@@ -103,20 +107,24 @@ document.addEventListener('keydown', function(event) {
         if ($("[id*='301626100']")[0].style.visibility ==='inherit') {
           //obtengo diagnostico según portapapeles
           navigator.clipboard.readText().then(clipText => {
-            myDiagClip = '*/DIAGNOSTICO: ' + clipText + '/*';
+            myDiagClip = clipText;
           });
           //obtengo diagnostico segun resumen
           getResumen();
-          myDiagRes = '*/DIAGNOSTICO: ' + myResumen + '/*';
-          // se genera nota */DIAGNOSTICO+resumen/* si pulso por primera vez
-          if (diagnostico1) {
-            myDiag = myDiagRes;
-            diagnostico1 = false;
+          // se genera nota */DIAGNOSTICO <vacio> /* si pulso por primera vez
+          if (diagnostico1 == 1) {
+            myDiag = '*/DIAGNOSTICO:  /*';
+            diagnostico1++;
           }
           // se genera nota */DIAGNOSTICO+portapapeles/* si pulso por segunda vez
+          else if (diagnostico1 == 2) {
+            myDiag =  '*/DIAGNOSTICO: ' + myDiagClip + '/*';
+            diagnostico1++;
+          }
+          // se genera nota */DIAGNOSTICO+resumen/* si pulso por tercera vez
           else {
-            myDiag = myDiagClip;
-            diagnostico1 = true;
+            myDiag = '*/DIAGNOSTICO: ' + myResumen + '/*';
+            diagnostico1 = 1;
           }
           $("[id*='304247080']").focus().val('').val(myDiag);
         }
@@ -129,7 +137,7 @@ document.addEventListener('keydown', function(event) {
             $("[id*='1000003889']").focus().val('').val(myCRN2);
             $("[id*='1000003890']").focus().val('').val(myCRN3);
             $("[id*='1000002488']").focus();
-            diagnostico1 = true;
+            diagnostico1 = 1;
         }
     }
     // Se detecta cuándo se pulsa Ctrl-Alt-[0..9] en la pestaña detalles de trabajo
