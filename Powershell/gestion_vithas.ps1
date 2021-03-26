@@ -1,4 +1,4 @@
-#V21.03.23
+#V21.03.26
 add-pssnapin microsoft.exchange.management.powershell.Snapin
 $adm=$false
 $dominio= "@vithases.mail.onmicrosoft.com"
@@ -28,7 +28,25 @@ $banner_sinAD="  _   _                   _     _                               _
  | . ' |/ _ \   / _ \ \/ / / __| __/ _ \  / _ \ '_ \    / /\ \ | |  | |
  | |\  | (_) | |  __/>  <| \__ \ ||  __/ |  __/ | | |  / ____ \| |__| |
  |_| \_|\___/   \___/_/\_\_|___/\__\___|  \___|_| |_| /_/    \_\_____/ "
+# funcion para registrar logs
+function Write-Log {
+  Param ([string]$logData)
+  $logLine = Get-Date -Format "dd/MM/yyyy HH:mm "
+  $logLine += $aliasAD + "  -  " + $logData
+  Add-content $logfile -value $logLine
+}
+# crear carpeta para logs si no existe
+$logFolder = $env:USERPROFILE + "\Gestion_Vithas_logs"
+if (-not(Test-Path -Path $logFolder)) {
+  New-Item -ItemType Directory -Path $logFolder
+}
 do {
+# crear fichero de log si no existe
+    $date = Get-Date -Format "yyyyMMdd"
+    $logFile = $logFolder + "\Gestion_Vithas_" + $date + ".log"
+    if (-not(Test-Path -Path $logFile)) {
+      New-Item -ItemType File -Path $logFile
+    }
     cls
 # solicita userid (permite realizar búsquedas)
     $aliasAD = Read-Host -Prompt "Introduce el alias de AD (sin @vithas.es) o '?' para buscar"
@@ -78,20 +96,26 @@ do {
             $buzon_o365=Get-RemoteMailbox -Identity $aliasAD -erroraction 'silentlycontinue'	# si no vacio = buzón en o365
             $buzon_exchange=Get-Mailbox -Identity $aliasAD -erroraction 'silentlycontinue'	# si no vacio = buzón en exchange
             if ($aliasAD.Length -gt 20) { $aliasAD=$aliasAD.Substring(0,20) }
-            $ad_user=Get-ADUser -Identity $aliasAD -erroraction 'silentlycontinue'	# si no vacio = existe en AD
+            $ad_user=Get-ADUser -Identity $aliasAD -properties EmailAddress -erroraction 'silentlycontinue'	# si no vacio = existe en AD
             $accion=""
             continue
         }elseif($accion -eq "M") {
             $adm = -not $adm
+        }elseif($accion -eq "L") {
+            notepad $logFile
         } elseif ($accion -eq "9") {
-            Select-Object -InputObject $ad_user -Property Name,GivenName,Surname,SamAccountName,UserPrincipalName,Enabled,DistinguishedName
+            Select-Object -InputObject $ad_user -Property Name,GivenName,Surname,SamAccountName,UserPrincipalName,Enabled,DistinguishedName,EmailAddress
+            Write-Log "Busqueda de propiedades de AD"
         } elseif ($buzon_exchange) {
             if ($accion -eq "1") {
   	            Get-Mailbox $aliasAD | fl database
+                Write-Log "Busqueda de BBDD de exchange"
             } elseif ($accion -eq "2" -and $adm) {
   	            New-MoveRequest $aliasAD -TargetDatabase bajasvithas -BadItemLimit 1000 -AcceptLargeDataLoss | Out-Host
+                Write-Log "Movido a BBDD  de bajas de exchange"
             } elseif ($accion -eq "3" -and $adm) {
   	            Get-MoveRequestStatistics $aliasAD | ft -autosize | Out-Host
+                Write-Log "Consuta estado movimiento BBDD de exchange"
             }
         } elseif ($buzon_o365 -and $adm) {
             if ($accion -eq "1") {
@@ -103,6 +127,7 @@ do {
                 $seguro = Read-Host -Prompt "¿Estás seguro de querer eliminar el buzón? ('SI' para confirmar)"
 				if ($seguro -eq "SI") {
 				    Disable-RemoteMailbox -Identity $aliasAD
+                    Write-Log "Eliminado buzón o365"
 				    Start-Sleep -Seconds 3
                     $buzon_o365=Get-RemoteMailbox -Identity $aliasAD -erroraction 'silentlycontinue'
                     $accion=""
@@ -116,6 +141,7 @@ do {
         } elseif ($ad_user -and (-not $buzon_o365) -and $adm) {
             if ($accion -eq "1") {
                 Enable-RemoteMailbox -Identity $aliasAD -RemoteRoutingAddress $mailbox | Out-Host
+                Write-Log "Creado buzón o365"
                 Write-Host "`nFin de la ejecución, usar opción 2 si no se actualiza la creación del buzón"
                 Start-Sleep -Seconds 4
                 $buzon_o365=Get-RemoteMailbox -Identity $aliasAD -erroraction 'silentlycontinue'
@@ -155,6 +181,7 @@ do {
 				Write-Host "|                               |"
 				Write-Host "| 0 - Buscar otro usuario       |"
 				Write-Host "| M - Modo consulta/admin.      |"
+				Write-Host "| L - Consultar logs de hoy     |"
 				Write-Host "| S - Salir                     |"
 				Write-Host "\_______________________________/"
 				Write-Host ""
